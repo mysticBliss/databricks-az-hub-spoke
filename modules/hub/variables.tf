@@ -1,18 +1,30 @@
-variable "workspace_prefix" {
+
+variable "prefix" {
+  description = "The prefix for resource names."
   type        = string
-  description = "Prefix for the workspace resources"
+}
+
+variable "env" {
+  description = "The environment (e.g., dev, prod)."
+  type        = string
+}
+
+variable "suffix" {
+  description = "The suffix for resource names."
+  type        = string
 }
 
 variable "rglocation" {
+  description = "The location where the resource group will be created."
   type        = string
-  description = "Location for the resource group"
 }
-
-
 
 variable "tags" {
   type        = map(string)
   description = "Tags to apply to resources"
+  default = {
+    createdByTerraform = "True"
+  }
 }
 
 variable "hubcidr" {
@@ -20,3 +32,6 @@ variable "hubcidr" {
   default     = "10.178.0.0/20"
   description = "CIDR for Hub VNet"
 }
+
+
+
