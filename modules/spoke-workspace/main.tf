@@ -2,41 +2,22 @@
  * Azure Databricks workspace in custom VNet
  *
  * Module creates:
- * * Resource group with random prefix
- * * Tags, including `Owner`, which is taken from `az account show --query user`
  * * VNet with public and private subnet
+ * * Vnet for VM and private links
  * * Databricks workspace
  */
 
-resource "random_string" "naming" {
-  special = false
-  upper   = false
-  length  = 6
-}
-
-data "azurerm_client_config" "current" {
-}
-
-data "external" "me" {
-  program = ["az", "account", "show", "--query", "user"]
-}
 
 locals {
-  
-  prefix   = join("-", [var.workspace_prefix, "${random_string.naming.result}"])
+  prefix   = "${var.prefix}-hub"
+  env      = var.env
+  suffix   = "${var.rglocation}${var.suffix}"
   location = var.rglocation
-  cidr     = var.spokecidr
-  dbfsname = join("", [var.dbfs_prefix, "${random_string.naming.result}"]) // dbfs name must not have special chars
-
-  // tags that are propagated down to all resources
-  tags = merge({
-    Owner = lookup(data.external.me.result, "name")
-    Epoch = random_string.naming.result
-  }, var.tags)
 }
 
 resource "azurerm_resource_group" "this" {
-  name     = "adb-spoke-${local.prefix}-rg"
-  location = local.location
-  tags     = local.tags
+  name = "rg-${local.prefix}-${local.env}-${local.suffix}"  // Name of the Hub resource group
+  location = var.rglocation  // Location of the Hub resource group
+  tags     = var.tags  // Tags for the Hub resource group
 }
+

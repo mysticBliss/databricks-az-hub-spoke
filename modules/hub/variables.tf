@@ -33,5 +33,11 @@ variable "hubcidr" {
   description = "CIDR for Hub VNet"
 }
 
+variable "subscription_id" {
+  type        = string
+  description = "Subscription ID of Azure"
+}
+
+
 
 

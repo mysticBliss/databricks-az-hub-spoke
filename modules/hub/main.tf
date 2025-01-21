@@ -6,7 +6,6 @@
  * * VNet with Firewall
  */
 
-
 locals {
   prefix   = "${var.prefix}-hub"
   env      = var.env
@@ -14,9 +13,9 @@ locals {
   location = var.rglocation
 }
 
-resource "azurerm_resource_group" "hub_connectivity_rg" {
+resource "azurerm_resource_group" "this" {
   name = "rg-${local.prefix}-${local.env}-${local.suffix}"  // Name of the Hub resource group
-  location = local.location  // Location of the Hub resource group
+  location = var.rglocation  // Location of the Hub resource group
   tags     = var.tags  // Tags for the Hub resource group
 }
 

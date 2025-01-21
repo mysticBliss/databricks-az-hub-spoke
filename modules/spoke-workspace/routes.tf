@@ -1,16 +1,22 @@
 
+data "azurerm_firewall" "hubfirewall" {
+  name                = var.hub_fw_name
+  resource_group_name = var.hub_rg_name
+}
+
 resource "azurerm_route_table" "adbroute" {
   // route all traffic from spoke vnet to hub vnet
   name                = "spoke-routetable"
-  location            = azurerm_resource_group.this.location
-  resource_group_name = azurerm_resource_group.this.name
+  location            = azurerm_resource_group.rg_connectivity.location
+  resource_group_name = azurerm_resource_group.rg_connectivity.name
 
   route {
     name                   = "to-firewall"
     address_prefix         = "0.0.0.0/0"
     next_hop_type          = "VirtualAppliance"
     # next_hop_in_ip_address = azurerm_firewall.hubfirewall.ip_configuration.0.private_ip_address // extract single item
-    next_hop_in_ip_address = var.hubfirewall.ip_configuration.0.private_ip_address // extract single item
+    # next_hop_in_ip_address = data.azurerm_firewall.hubfirewall.ip_configuration.0.private_ip_address // extract single item
+    next_hop_in_ip_address =  data.azurerm_firewall.hubfirewall.ip_configuration[0].private_ip_address
   }
 }
 

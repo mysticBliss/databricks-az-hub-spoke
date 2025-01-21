@@ -1,10 +1,10 @@
 resource "azurerm_virtual_network" "hubvnet" {
   // VNet for hub resource group
-  name                = "${local.prefix}-hub-vnet"
+  name                = "vnet-${local.prefix}-${local.env}-${local.suffix}"
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
   address_space       = [var.hubcidr]
-  tags                = local.tags
+  tags                = var.tags
 }
 
 resource "azurerm_subnet" "hubfw" {

@@ -34,6 +34,8 @@ module "spoke" {
  
 
   # Pass Objects from hub Module.
-  hubvnet         = module.hub.hubvnet     # Pass the entire hubvnet object to the spoke module
+  hub_vnet_id         = module.hub.hubvnet.id    # Pass the entire hubvnet object to the spoke module
   hubfirewall  = module.hub.hubfirewall
+
+  
 }

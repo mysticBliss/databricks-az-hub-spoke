@@ -1,10 +1,16 @@
+# Virtual Machines Resource Group
+resource "azurerm_resource_group" "rg_vm" {
+  name     = "rg-vitual-machine-${var.prefix}-${var.env}-${var.suffix}"
+  location = var.rglocation
+}
+
 resource "azurerm_network_interface" "testvmnic" {
-  name                = "${local.prefix}-testvm-nic"
-  location            = azurerm_resource_group.this.location
-  resource_group_name = azurerm_resource_group.this.name
+  name                = "nic-vitual-machine-${var.prefix}-${var.env}-${var.suffix}"
+  location            = azurerm_resource_group.rg_vm.location
+  resource_group_name = azurerm_resource_group.rg_vm.name
 
   ip_configuration {
-    name                          = "testvmip"
+    name                          = "vm-public-ip"
     subnet_id                     = azurerm_subnet.testvmsubnet.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.testvmpublicip.id
@@ -12,10 +18,10 @@ resource "azurerm_network_interface" "testvmnic" {
 }
 
 resource "azurerm_network_security_group" "testvm-nsg" {
-  name                = "${local.prefix}-testvm-nsg"
-  location            = azurerm_resource_group.this.location
-  resource_group_name = azurerm_resource_group.this.name
-  tags                = local.tags
+  name                = "nsg-vitual-machine-${var.prefix}-${var.env}-${var.suffix}"
+  location            = azurerm_resource_group.rg_vm.location
+  resource_group_name = azurerm_resource_group.rg_vm.name
+  tags                = var.tags
 }
 
 resource "azurerm_network_interface_security_group_association" "testvmnsgassoc" {
@@ -46,22 +52,22 @@ resource "azurerm_network_security_rule" "test0" {
   source_address_prefixes     = [local.ifconfig_co_json.ip]
   destination_address_prefix  = "VirtualNetwork"
   network_security_group_name = azurerm_network_security_group.testvm-nsg.name
-  resource_group_name         = azurerm_resource_group.this.name
+  resource_group_name         = azurerm_resource_group.rg_vm.name
 }
 
 // give a public ip addr to vm
 resource "azurerm_public_ip" "testvmpublicip" {
-  name                = "${local.prefix}-vmpublicip"
-  location            = azurerm_resource_group.this.location
-  resource_group_name = azurerm_resource_group.this.name
+  name                = "pip-vitual-machine-${var.prefix}-${var.env}-${var.suffix}"
+  location            = azurerm_resource_group.rg_vm.location
+  resource_group_name = azurerm_resource_group.rg_vm.name
   allocation_method   = "Static"
   sku                 = "Standard"
 }
 
 resource "azurerm_windows_virtual_machine" "testvm" {
-  name                = "${local.prefix}-test"
-  resource_group_name = azurerm_resource_group.this.name
-  location            = azurerm_resource_group.this.location
+  name                = "vm-vitual-machine-${var.prefix}-${var.env}-${var.suffix}"
+  resource_group_name = azurerm_resource_group.rg_vm.name
+  location            = azurerm_resource_group.rg_vm.location
   size                = "Standard_F4s_v2"
   admin_username      = "azureuser"
   admin_password      = var.test_vm_password
@@ -83,8 +89,8 @@ resource "azurerm_windows_virtual_machine" "testvm" {
 }
 
 resource "azurerm_subnet" "testvmsubnet" {
-  name                 = "${local.prefix}-testvmsubnet"
-  resource_group_name  = azurerm_resource_group.this.name
+  name                 = "snet-vitual-machine-${var.prefix}-${var.env}-${var.suffix}"
+  resource_group_name  = azurerm_resource_group.rg_vm.name
   virtual_network_name = azurerm_virtual_network.this.name
-  address_prefixes     = [cidrsubnet(local.cidr, 3, 3)]
+  address_prefixes     = [cidrsubnet(var.spokecidr, 3, 3)]
 }

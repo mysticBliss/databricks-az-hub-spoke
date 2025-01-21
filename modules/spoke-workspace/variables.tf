@@ -1,3 +1,22 @@
+variable "prefix" {
+  description = "The prefix for resource names."
+  type        = string
+  default = "default"
+}
+
+variable "env" {
+  description = "The environment (e.g., dev, prod)."
+  type        = string
+  default = "test"
+}
+
+variable "suffix" {
+  description = "The suffix for resource names."
+  type        = string
+  default = "changeit"
+}
+
+
 variable "spokecidr" {
   type        = string
   default     = "10.179.0.0/20"
@@ -41,13 +60,8 @@ variable "firewallfqdn" {
   description = "List of domains names to put into application rules for handling of HTTPS traffic (Databricks storage accounts, etc.)"
 }
 
-variable "dbfs_prefix" {
-  type        = string
-  default     = "dbfs"
-  description = "Prefix for DBFS storage account name"
-}
 
-variable "workspace_prefix" {
+variable "dbfsname" {
   type        = string
   default     = "adb"
   description = "Prefix to use for Workspace name"
@@ -71,23 +85,36 @@ variable "tags" {
   default     = {}
 }
 
-variable "hubvnet" {
-  description = "The entire hub virtual network object."
-  type = object({
-    id                = string
-    name              = string
-    location          = string
-    resource_group_name = string
-    address_space      = list(string)
-    tags              = map(string)
-  })
-}
-
-
 # variable "hubvnet" {
-#   type = any
+#   description = "The entire hub virtual network object."
+#   type = object({
+#     id                = string
+#     name              = string
+#     location          = string
+#     resource_group_name = string
+#     address_space      = list(string)
+#     tags              = map(string)
+#   })
 # }
 
-variable "hubfirewall" {
-  type = any
+
+variable "subscription_id" {
+  type        = string
+  description = "Subscription ID of Azure"
 }
+
+variable "hub_fw_name" {
+  type = string
+  description = "Name of the Hub Firewall"
+}
+
+variable "hub_rg_name" {
+  type = string
+  description = "Name of the rg of Hub"
+}
+
+variable "hub_vnet_name" {
+  type = string
+  description = "Name of the Hub Firewall"
+}
+

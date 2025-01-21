@@ -22,8 +22,8 @@ data "dns_a_record_set" "scc_relay" {
 
 resource "azurerm_firewall_network_rule_collection" "adbfnetwork" {
   name                = "adbcontrolplanenetwork"
-  azure_firewall_name = var.hubfirewall.name
-  resource_group_name = var.hubvnet.resource_group_name
+  azure_firewall_name = var.hub_fw_name
+  resource_group_name = var.hub_rg_name
   priority            = 200
   action              = "Allow"
 
@@ -69,7 +69,7 @@ resource "azurerm_firewall_network_rule_collection" "adbfnetwork" {
       join(", ", azurerm_subnet.private.address_prefixes),
     ]
 
-    destination_addresses = local.eventhubs_ips
+    destination_addresses = var.eventhubs
     destination_ports     = ["9093"]
     protocols = [
       "TCP",
@@ -80,8 +80,8 @@ resource "azurerm_firewall_network_rule_collection" "adbfnetwork" {
 
 resource "azurerm_firewall_application_rule_collection" "adbfqdn" {
   name                = "adbcontrolplanefqdn"
-  azure_firewall_name = var.hubfirewall.name
-  resource_group_name = var.hubvnet.resource_group_name
+  azure_firewall_name = var.hub_fw_name
+  resource_group_name = var.hub_rg_name
   priority            = 200
   action              = "Allow"
 
@@ -109,7 +109,7 @@ resource "azurerm_firewall_application_rule_collection" "adbfqdn" {
       join(", ", azurerm_subnet.private.address_prefixes),
     ]
 
-    target_fqdns = ["${local.dbfsname}.dfs.core.windows.net", "${local.dbfsname}.blob.core.windows.net"]
+    target_fqdns = ["${var.dbfsname}.dfs.core.windows.net", "${var.dbfsname}.blob.core.windows.net"]
 
     protocol {
       port = "443"
@@ -159,8 +159,8 @@ resource "azurerm_firewall_application_rule_collection" "adbfqdn" {
 resource "azurerm_firewall_network_rule_collection" "allow_azuremonitor" {
   // allow access to Azure Monoring services
   name                = "allow_azuremonitor"
-  azure_firewall_name = var.hubfirewall.name
-  resource_group_name = var.hubvnet.resource_group_name
+  azure_firewall_name = var.hub_fw_name
+  resource_group_name = var.hub_rg_name
   priority            = 300
   action              = "Allow"
 
